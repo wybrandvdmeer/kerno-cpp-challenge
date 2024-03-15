@@ -12,6 +12,10 @@ static std::vector<std::string> requestKeywords = {"POST", "PATCH", "GET", "PUT"
 static std::vector<std::string> responseKeywords = {"HTTP/1.1"};
 static std::string traceIDKeyword = "X-Trace-ID:";
 
+HttpObject::HttpObject(Type type) {
+	HttpObject::type = type;
+}
+
 bool HttpObject::isHttpRequest(const std::string &line) {
 	std::vector<std::string> words = split(line);
 	return !words.empty() && contains(requestKeywords, words.front());

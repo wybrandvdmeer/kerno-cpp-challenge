@@ -1,7 +1,7 @@
-all: ee
+all: kc
 
-ee: main.o ParseInput.o HttpObject.o HttpRequest.o HttpResponse.o HttpKey.o ReportThread.o HttpKeysMap.o
-	g++ -o ee ParseInput.o main.o HttpObject.o HttpRequest.o HttpResponse.o HttpKey.o \
+kc: main.o ParseInput.o HttpObject.o HttpRequest.o HttpResponse.o HttpKey.o ReportThread.o HttpKeysMap.o
+	g++ -o kc ParseInput.o main.o HttpObject.o HttpRequest.o HttpResponse.o HttpKey.o \
         ReportThread.o HttpKeysMap.o
 
 ParseInput.o: ParseInput.cpp ParseInput.h
@@ -20,7 +20,6 @@ HttpKey.o: HttpKey.cpp HttpKey.h
 	g++ -c HttpKey.cpp
 
 HttpRequest.o: HttpRequest.cpp HttpRequest.h
-HttpRequest.o: HttpRequest.cpp HttpRequest.h
 	g++ -c HttpRequest.cpp
 
 HttpResponse.o: HttpResponse.cpp HttpResponse.h
@@ -30,4 +29,4 @@ main.o: main.cpp
 	g++ -c main.cpp
 
 clean:
-	rm -rf *.o ee
+	rm -rf *.o *gch kc

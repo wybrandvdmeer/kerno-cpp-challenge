@@ -17,13 +17,11 @@ ReportThread::ReportThread(HttpKeysMap * httpKeysMap) {
 void ReportThread::reportInThread() {
 	while(true) {
 		bool hdr=true;
-
 		std::map<HttpKey,int> * httpKeys = httpKeysMap->get();
 		for (const auto &p : *httpKeys) {
-			HttpKey pp = p.first;
+			HttpKey hk = p.first;
 			char buf[1000];
-			sprintf(buf, "%s,%s -> %d\n", pp.path.c_str(), pp.code.c_str(), p.second); 
-
+			sprintf(buf, "%s,%s -> %d\n", hk.path.c_str(), hk.code.c_str(), p.second); 
 			if(hdr) {
 				write("Report\n");
 				hdr = false;
@@ -36,7 +34,7 @@ void ReportThread::reportInThread() {
 
 		httpKeysMap->release();
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(interval * 1000));
 	}
 }
 
@@ -48,10 +46,11 @@ void ReportThread::write(const char * line) {
 	}
 }
 
-std::thread ReportThread::report(std::string path) {
+std::thread ReportThread::report(std::string path, int interval) {
 	if(!path.empty()) {
 		ReportThread::reportStream.open(path.c_str());
 	} 
+	this->interval = interval;
 
 	std::thread thread_obj(&ReportThread::reportInThread, this);
 	return thread_obj;

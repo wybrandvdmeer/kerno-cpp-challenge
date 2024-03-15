@@ -3,7 +3,7 @@
 #include "HttpObject.h"
 #include "HttpResponse.h"
 
-HttpResponse::HttpResponse(std::string &line) {
+HttpResponse::HttpResponse(std::string &line) : HttpObject(response) {
 	std::vector<std::string> words = HttpObject::split(line);
 	if(words.size() < 1) {
 		throw std::invalid_argument("no http code available");

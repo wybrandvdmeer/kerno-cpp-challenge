@@ -13,4 +13,5 @@ public:
 
 private:
 	std::set<HttpObject*> httpObjects;
+	void registHttpKey(HttpObject * left, HttpObject * right);
 };

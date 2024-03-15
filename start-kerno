@@ -1,0 +1,8 @@
+echo 'Start report' 
+
+> /tmp/report
+
+tail -f /tmp/report &
+
+/home/kerno/generator | /home/kerno/kc -o /tmp/report -i 60
+

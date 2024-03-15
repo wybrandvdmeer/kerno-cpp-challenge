@@ -36,26 +36,19 @@ void ParseInput::parse() {
 void ParseInput::regist(HttpObject *httpObject) {
 	for(auto h : httpObjects) {
 		if(h->traceId == httpObject->traceId) {
-			HttpKey httpKey;
-			if(httpObject->code.empty()) {
-				httpKey.code = h->code; 
-				httpKey.path = httpObject->path;
+			/* It can happen that the generator uses non unique traceIds like this:
+				request x
+				request x
+				response x
+				response x
+			This will result in linkage of a request to a request (or rsp to rsp).
+			*/
+
+			if(httpObject->type != h->type) {
+				registHttpKey(httpObject, h);
 			} else {
-				httpKey.code = httpObject->code; 
-				httpKey.path = h->path;
+				cerr << (std::string("Non unique traceID: ") + h->traceId + std::string("\n") ) << std::flush;
 			}
-
-			std::map<HttpKey,int> *httpKeys = ParseInput::httpKeysMap.get();
-
-			auto it = httpKeys->find(httpKey);
-
-			if(it == httpKeys->end()) {
-				(*httpKeys)[httpKey] = 1;
-			} else {
-				it->second++;
-			}
-
-			httpKeysMap.release();
 
 			delete h;
 			delete httpObject;
@@ -68,3 +61,27 @@ void ParseInput::regist(HttpObject *httpObject) {
 
 	ParseInput::httpObjects.insert(httpObject);
 }
+
+void ParseInput::registHttpKey(HttpObject * left, HttpObject * right) {
+	HttpKey httpKey;
+	if(left->code.empty()) {
+		httpKey.code = right->code; 
+		httpKey.path = left->path;
+	} else {
+		httpKey.code = left->code; 
+		httpKey.path = right->path;
+	}
+
+	std::map<HttpKey,int> *httpKeys = ParseInput::httpKeysMap.get();
+
+	auto it = httpKeys->find(httpKey);
+
+	if(it == httpKeys->end()) {
+		(*httpKeys)[httpKey] = 1;
+	} else {
+		it->second++;
+	}
+
+	httpKeysMap.release();
+}
+
